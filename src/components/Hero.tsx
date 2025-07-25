@@ -1,11 +1,41 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
-import { Bot, Users, ArrowRight, Star, Zap } from 'lucide-react';
+import { Bot, Users, ArrowRight, Star, Zap, ChevronLeft, ChevronRight } from 'lucide-react';
+import CountUp from 'react-countup';
 import heroAiImage from '@/assets/hero-ai-interview.jpg';
 import heroRealImage from '@/assets/hero-real-interview.jpg';
+import aiInterview1 from '@/assets/ai-interview-1.jpg';
+import aiInterview2 from '@/assets/ai-interview-2.jpg';
+import realInterview1 from '@/assets/real-interview-1.jpg';
 
 const Hero = () => {
+  const [currentAiSlide, setCurrentAiSlide] = useState(0);
+  const [currentRealSlide, setCurrentRealSlide] = useState(0);
+
+  const aiImages = [heroAiImage, aiInterview1, aiInterview2];
+  const realImages = [heroRealImage, realInterview1, heroAiImage];
+
+  useEffect(() => {
+    const aiInterval = setInterval(() => {
+      setCurrentAiSlide(prev => (prev + 1) % aiImages.length);
+    }, 3000);
+
+    const realInterval = setInterval(() => {
+      setCurrentRealSlide(prev => (prev + 1) % realImages.length);
+    }, 3500);
+
+    return () => {
+      clearInterval(aiInterval);
+      clearInterval(realInterval);
+    };
+  }, []);
+
+  const nextAiSlide = () => setCurrentAiSlide(prev => (prev + 1) % aiImages.length);
+  const prevAiSlide = () => setCurrentAiSlide(prev => (prev - 1 + aiImages.length) % aiImages.length);
+  const nextRealSlide = () => setCurrentRealSlide(prev => (prev + 1) % realImages.length);
+  const prevRealSlide = () => setCurrentRealSlide(prev => (prev - 1 + realImages.length) % realImages.length);
+
   return (
     <div className="min-h-screen bg-gradient-hero pt-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
@@ -45,18 +75,28 @@ const Hero = () => {
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-20">
             <div className="text-center">
-              <div className="text-3xl font-bold text-primary mb-2">50K+</div>
-              <div className="text-muted-foreground">Interviews Completed</div>
+              <div className="text-3xl font-bold text-primary mb-2">
+                <CountUp start={0} end={50000} duration={2.5} separator="," />+
+              </div>
+              <div className="text-muted-foreground">Successful Interviews</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-primary mb-2">95%</div>
+              <div className="text-3xl font-bold text-primary mb-2">
+                <CountUp start={0} end={95} duration={2.5} />%
+              </div>
               <div className="text-muted-foreground">Success Rate</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-primary mb-2">500+</div>
+              <div className="text-3xl font-bold text-primary mb-2">
+                <CountUp start={0} end={500} duration={2.5} />+
+              </div>
               <div className="text-muted-foreground">IT Professionals</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-primary mb-2">24/7</div>
+              <div className="text-muted-foreground">Availability</div>
             </div>
           </div>
         </div>
@@ -72,12 +112,46 @@ const Hero = () => {
                 </div>
               </div>
               
-              <div className="mb-6">
-                <img 
-                  src={heroAiImage} 
-                  alt="AI Mock Interview" 
-                  className="w-full h-48 object-cover rounded-lg"
-                />
+              <div className="mb-6 relative overflow-hidden rounded-lg">
+                <div className="relative h-48">
+                  {aiImages.map((image, index) => (
+                    <img
+                      key={index}
+                      src={image}
+                      alt={`AI Mock Interview ${index + 1}`}
+                      className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${
+                        index === currentAiSlide ? 'opacity-100' : 'opacity-0'
+                      }`}
+                    />
+                  ))}
+                  
+                  {/* Navigation Arrows */}
+                  <button 
+                    onClick={prevAiSlide}
+                    className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-1 transition-colors"
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </button>
+                  <button 
+                    onClick={nextAiSlide}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-1 transition-colors"
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </button>
+                  
+                  {/* Dots Indicator */}
+                  <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex space-x-1">
+                    {aiImages.map((_, index) => (
+                      <div
+                        key={index}
+                        className={`w-2 h-2 rounded-full transition-colors cursor-pointer ${
+                          index === currentAiSlide ? 'bg-primary' : 'bg-white/50'
+                        }`}
+                        onClick={() => setCurrentAiSlide(index)}
+                      />
+                    ))}
+                  </div>
+                </div>
               </div>
               
               <h3 className="text-2xl font-bold text-foreground mb-4">AI Mock Interview</h3>
@@ -119,12 +193,46 @@ const Hero = () => {
                 </div>
               </div>
               
-              <div className="mb-6">
-                <img 
-                  src={heroRealImage} 
-                  alt="Real IT Professional Interview" 
-                  className="w-full h-48 object-cover rounded-lg"
-                />
+              <div className="mb-6 relative overflow-hidden rounded-lg">
+                <div className="relative h-48">
+                  {realImages.map((image, index) => (
+                    <img
+                      key={index}
+                      src={image}
+                      alt={`Real IT Professional Interview ${index + 1}`}
+                      className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${
+                        index === currentRealSlide ? 'opacity-100' : 'opacity-0'
+                      }`}
+                    />
+                  ))}
+                  
+                  {/* Navigation Arrows */}
+                  <button 
+                    onClick={prevRealSlide}
+                    className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-1 transition-colors"
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </button>
+                  <button 
+                    onClick={nextRealSlide}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-1 transition-colors"
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </button>
+                  
+                  {/* Dots Indicator */}
+                  <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex space-x-1">
+                    {realImages.map((_, index) => (
+                      <div
+                        key={index}
+                        className={`w-2 h-2 rounded-full transition-colors cursor-pointer ${
+                          index === currentRealSlide ? 'bg-primary' : 'bg-white/50'
+                        }`}
+                        onClick={() => setCurrentRealSlide(index)}
+                      />
+                    ))}
+                  </div>
+                </div>
               </div>
               
               <h3 className="text-2xl font-bold text-foreground mb-4">Real IT Professional</h3>

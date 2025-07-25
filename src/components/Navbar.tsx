@@ -39,13 +39,29 @@ const Navbar = () => {
             <Link to="/contact" className="text-foreground hover:text-primary transition-colors">
               Contact
             </Link>
-            <div className="flex items-center space-x-3">
-              <Link to="/resume-analyzer" className="text-foreground hover:text-primary transition-colors">
-                Resume Analyzer
-              </Link>
-              <Link to="/resume-builder" className="text-foreground hover:text-primary transition-colors">
-                Resume Builder
-              </Link>
+            
+            {/* Resume Dropdown */}
+            <div className="relative group">
+              <button className="text-foreground hover:text-primary transition-colors flex items-center">
+                Resume
+                <svg className="ml-1 h-4 w-4 transition-transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              <div className="absolute top-full left-0 mt-2 w-48 bg-card border border-border rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                <Link 
+                  to="/resume-analyzer" 
+                  className="block px-4 py-3 text-foreground hover:text-primary hover:bg-accent rounded-t-lg transition-colors"
+                >
+                  Resume Analyzer
+                </Link>
+                <Link 
+                  to="/resume-builder" 
+                  className="block px-4 py-3 text-foreground hover:text-primary hover:bg-accent rounded-b-lg transition-colors"
+                >
+                  Resume Builder
+                </Link>
+              </div>
             </div>
           </div>
 
@@ -107,20 +123,25 @@ const Navbar = () => {
               >
                 Contact
               </Link>
-              <Link
-                to="/resume-analyzer"
-                className="block px-3 py-2 text-foreground hover:text-primary transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Resume Analyzer
-              </Link>
-              <Link
-                to="/resume-builder"
-                className="block px-3 py-2 text-foreground hover:text-primary transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Resume Builder
-              </Link>
+              
+              {/* Mobile Resume Section */}
+              <div className="border-t border-border pt-2 mt-2">
+                <div className="px-3 py-2 text-sm font-medium text-muted-foreground">Resume Tools</div>
+                <Link
+                  to="/resume-analyzer"
+                  className="block px-3 py-2 text-foreground hover:text-primary transition-colors"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Resume Analyzer
+                </Link>
+                <Link
+                  to="/resume-builder"
+                  className="block px-3 py-2 text-foreground hover:text-primary transition-colors"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Resume Builder
+                </Link>
+              </div>
               <div className="flex flex-col space-y-2 pt-4">
                 <Link to="/signin" onClick={() => setIsMenuOpen(false)}>
                   <Button variant="ghost" className="w-full">

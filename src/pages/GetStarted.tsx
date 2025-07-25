@@ -19,6 +19,7 @@ const GetStarted = () => {
     role: '',
     experience: ''
   });
+  const [termsAccepted, setTermsAccepted] = useState(false);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -151,7 +152,14 @@ const GetStarted = () => {
               </div>
 
               <div className="flex items-start space-x-2">
-                <input type="checkbox" id="terms" className="rounded border-border mt-1" required />
+                <input 
+                  type="checkbox" 
+                  id="terms" 
+                  className="rounded border-border mt-1" 
+                  checked={termsAccepted}
+                  onChange={(e) => setTermsAccepted(e.target.checked)}
+                  required 
+                />
                 <label htmlFor="terms" className="text-sm text-muted-foreground">
                   I agree to the{' '}
                   <Link to="/terms" className="text-primary hover:underline">
@@ -164,7 +172,12 @@ const GetStarted = () => {
                 </label>
               </div>
 
-              <Button type="submit" variant="premium" className="w-full group">
+              <Button 
+                type="submit" 
+                variant="premium" 
+                className="w-full group" 
+                disabled={!termsAccepted}
+              >
                 Create Account
                 <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
               </Button>
