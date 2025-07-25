@@ -1,6 +1,7 @@
 import React from 'react';
 import { Card } from '@/components/ui/card';
 import { Bot, Users, FileText, BarChart3, Video, Shield, Clock, Trophy } from 'lucide-react';
+import CountUp from 'react-countup';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 
@@ -45,10 +46,10 @@ const Features = () => {
   ];
 
   const stats = [
-    { number: '50K+', label: 'Successful Interviews' },
-    { number: '95%', label: 'Success Rate' },
-    { number: '500+', label: 'IT Professionals' },
-    { number: '24/7', label: 'Availability' }
+    { number: 50000, suffix: 'K+', label: 'Successful Interviews' },
+    { number: 95, suffix: '%', label: 'Success Rate' },
+    { number: 500, suffix: '+', label: 'IT Professionals' },
+    { number: 24, suffix: '/7', label: 'Availability' }
   ];
 
   return (
@@ -72,7 +73,10 @@ const Features = () => {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-16">
             {stats.map((stat, index) => (
               <div key={index} className="text-center">
-                <div className="text-4xl font-bold text-primary mb-2">{stat.number}</div>
+                <div className="text-4xl font-bold text-primary mb-2">
+                  <CountUp start={0} end={stat.number} duration={2.5} separator="," />
+                  {stat.suffix}
+                </div>
                 <div className="text-muted-foreground">{stat.label}</div>
               </div>
             ))}

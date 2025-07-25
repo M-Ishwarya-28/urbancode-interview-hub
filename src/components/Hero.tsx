@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
-import { Bot, Users, ArrowRight, Star, Zap, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Bot, Users, ArrowRight, Star, Zap, ChevronLeft, ChevronRight, BarChart3, Video } from 'lucide-react';
 import CountUp from 'react-countup';
 import heroAiImage from '@/assets/hero-ai-interview.jpg';
 import heroRealImage from '@/assets/hero-real-interview.jpg';
@@ -262,6 +262,158 @@ const Hero = () => {
                   <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </Link>
+            </div>
+          </div>
+        </div>
+
+        {/* Features Section */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-foreground mb-6">
+              Why Choose
+              <span className="bg-gradient-primary bg-clip-text text-transparent"> Urbancode Mock AI</span>
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              Everything you need to succeed in your next tech interview, backed by cutting-edge AI and real industry expertise.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
+            <div className="bg-card rounded-2xl p-8 border border-border hover:border-primary/50 transition-all duration-300 hover:shadow-card group">
+              <div className="bg-primary/10 p-4 rounded-full w-16 h-16 mb-6 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                <Bot className="h-8 w-8 text-primary" />
+              </div>
+              <h3 className="text-xl font-bold text-foreground mb-4">AI-Powered Practice</h3>
+              <p className="text-muted-foreground mb-4">
+                Practice with our advanced AI that adapts to your responses and provides real-time feedback on technical and behavioral questions.
+              </p>
+              <ul className="space-y-2">
+                <li className="flex items-center text-sm text-muted-foreground">
+                  <div className="w-1.5 h-1.5 bg-primary rounded-full mr-3 flex-shrink-0" />
+                  Instant feedback and scoring
+                </li>
+                <li className="flex items-center text-sm text-muted-foreground">
+                  <div className="w-1.5 h-1.5 bg-primary rounded-full mr-3 flex-shrink-0" />
+                  1000+ technical questions
+                </li>
+              </ul>
+            </div>
+
+            <div className="bg-card rounded-2xl p-8 border border-border hover:border-primary/50 transition-all duration-300 hover:shadow-card group">
+              <div className="bg-primary/10 p-4 rounded-full w-16 h-16 mb-6 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                <Users className="h-8 w-8 text-primary" />
+              </div>
+              <h3 className="text-xl font-bold text-foreground mb-4">Real Professional Feedback</h3>
+              <p className="text-muted-foreground mb-4">
+                Connect with experienced engineers from FAANG companies for authentic interview practice and career guidance.
+              </p>
+              <ul className="space-y-2">
+                <li className="flex items-center text-sm text-muted-foreground">
+                  <div className="w-1.5 h-1.5 bg-primary rounded-full mr-3 flex-shrink-0" />
+                  Industry experts from top companies
+                </li>
+                <li className="flex items-center text-sm text-muted-foreground">
+                  <div className="w-1.5 h-1.5 bg-primary rounded-full mr-3 flex-shrink-0" />
+                  Real-world scenarios
+                </li>
+              </ul>
+            </div>
+
+            <div className="bg-card rounded-2xl p-8 border border-border hover:border-primary/50 transition-all duration-300 hover:shadow-card group">
+              <div className="bg-primary/10 p-4 rounded-full w-16 h-16 mb-6 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                <BarChart3 className="h-8 w-8 text-primary" />
+              </div>
+              <h3 className="text-xl font-bold text-foreground mb-4">Performance Analytics</h3>
+              <p className="text-muted-foreground mb-4">
+                Track your progress with detailed analytics and get personalized recommendations for improvement.
+              </p>
+              <ul className="space-y-2">
+                <li className="flex items-center text-sm text-muted-foreground">
+                  <div className="w-1.5 h-1.5 bg-primary rounded-full mr-3 flex-shrink-0" />
+                  Progress tracking
+                </li>
+                <li className="flex items-center text-sm text-muted-foreground">
+                  <div className="w-1.5 h-1.5 bg-primary rounded-full mr-3 flex-shrink-0" />
+                  Weakness identification
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          {/* Success Stories */}
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-foreground mb-6">Success Stories</h2>
+            <p className="text-xl text-muted-foreground mb-12 max-w-3xl mx-auto">
+              Join thousands of candidates who've landed their dream jobs with our platform.
+            </p>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="bg-card rounded-2xl p-8 border border-border">
+                <div className="text-6xl mb-4">👨‍💻</div>
+                <h3 className="text-lg font-bold text-foreground mb-2">Alex Chen</h3>
+                <p className="text-primary font-medium mb-3">Software Engineer at Google</p>
+                <p className="text-muted-foreground text-sm">
+                  "The AI practice sessions helped me identify my weak spots and improve my communication skills. Landed my dream job!"
+                </p>
+              </div>
+
+              <div className="bg-card rounded-2xl p-8 border border-border">
+                <div className="text-6xl mb-4">👩‍💻</div>
+                <h3 className="text-lg font-bold text-foreground mb-2">Sarah Kim</h3>
+                <p className="text-primary font-medium mb-3">Frontend Developer at Meta</p>
+                <p className="text-muted-foreground text-sm">
+                  "Practicing with real professionals gave me insights I couldn't get anywhere else. Highly recommend!"
+                </p>
+              </div>
+
+              <div className="bg-card rounded-2xl p-8 border border-border">
+                <div className="text-6xl mb-4">👨‍💼</div>
+                <h3 className="text-lg font-bold text-foreground mb-2">Mike Johnson</h3>
+                <p className="text-primary font-medium mb-3">Full Stack Engineer at Amazon</p>
+                <p className="text-muted-foreground text-sm">
+                  "The detailed feedback and analytics helped me track my progress and improve systematically."
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Technology Section */}
+          <div className="bg-gradient-hero rounded-3xl p-12 text-center">
+            <h2 className="text-4xl font-bold text-foreground mb-6">Powered by Advanced AI</h2>
+            <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto">
+              Our platform uses cutting-edge artificial intelligence to provide the most realistic and effective interview preparation experience.
+            </p>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="text-center">
+                <div className="bg-primary/10 p-4 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                  <Zap className="h-8 w-8 text-primary" />
+                </div>
+                <h3 className="text-lg font-semibold text-foreground mb-2">Real-Time Adaptation</h3>
+                <p className="text-muted-foreground">
+                  AI adjusts difficulty and question types based on your responses
+                </p>
+              </div>
+              
+              <div className="text-center">
+                <div className="bg-primary/10 p-4 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                  <BarChart3 className="h-8 w-8 text-primary" />
+                </div>
+                <h3 className="text-lg font-semibold text-foreground mb-2">Deep Analytics</h3>
+                <p className="text-muted-foreground">
+                  Comprehensive analysis of your performance and improvement areas
+                </p>
+              </div>
+              
+              <div className="text-center">
+                <div className="bg-primary/10 p-4 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                  <Video className="h-8 w-8 text-primary" />
+                </div>
+                <h3 className="text-lg font-semibold text-foreground mb-2">Multi-Modal Assessment</h3>
+                <p className="text-muted-foreground">
+                  Evaluation of verbal, non-verbal, and technical communication
+                </p>
+              </div>
             </div>
           </div>
         </div>
