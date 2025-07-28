@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -38,6 +38,25 @@ const AIInterview = () => {
   });
 
   const [isInInterview, setIsInInterview] = useState(false);
+  const [currentQuestion, setCurrentQuestion] = useState('');
+  const [isAISpeaking, setIsAISpeaking] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
+  const [openAIKey, setOpenAIKey] = useState('');
+  const [showKeyInput, setShowKeyInput] = useState(false);
+  
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const animationRef = useRef<number>();
+
+  const questions = [
+    "How do you prioritize your tasks when you have multiple deadlines to meet?",
+    "Tell me about a challenging project you worked on and how you overcame obstacles.",
+    "Where do you see yourself in 5 years?",
+    "What motivates you to excel in your work?",
+    "How do you handle stress and pressure in the workplace?"
+  ];
+
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 
   const interviewers = [
     { id: 'payal', name: 'Payal', language: 'IN English', avatar: '👩🏻‍💼', expertise: 'Technical' },
@@ -57,7 +76,124 @@ const AIInterview = () => {
   };
 
   const handleStartInterview = () => {
+    if (!openAIKey) {
+      setShowKeyInput(true);
+      return;
+    }
     setIsInInterview(true);
+    setCurrentQuestion(questions[0]);
+    generateAndPlayAIResponse(questions[0]);
+  };
+
+  const generateAndPlayAIResponse = async (question: string) => {
+    if (!openAIKey) return;
+    
+    setIsAISpeaking(true);
+    
+    try {
+      // Generate audio using OpenAI TTS
+      const response = await fetch('https://api.openai.com/v1/audio/speech', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${openAIKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'tts-1',
+          voice: 'alloy',
+          input: question,
+          response_format: 'mp3'
+        }),
+      });
+
+      if (response.ok) {
+        const audioBlob = await response.blob();
+        const audioUrl = URL.createObjectURL(audioBlob);
+        
+        if (audioRef.current) {
+          audioRef.current.src = audioUrl;
+          audioRef.current.play();
+          startLipSyncAnimation();
+          
+          audioRef.current.onended = () => {
+            setIsAISpeaking(false);
+            stopLipSyncAnimation();
+          };
+        }
+      }
+    } catch (error) {
+      console.error('Error generating AI speech:', error);
+      setIsAISpeaking(false);
+    }
+  };
+
+  const startLipSyncAnimation = () => {
+    if (!canvasRef.current) return;
+    
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const animate = () => {
+      // Clear canvas
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      // Draw AI interviewer face (simplified representation)
+      const centerX = canvas.width / 2;
+      const centerY = canvas.height / 2;
+      
+      // Head
+      ctx.beginPath();
+      ctx.arc(centerX, centerY - 20, 60, 0, 2 * Math.PI);
+      ctx.fillStyle = '#D4A574';
+      ctx.fill();
+      
+      // Eyes
+      ctx.beginPath();
+      ctx.arc(centerX - 20, centerY - 30, 5, 0, 2 * Math.PI);
+      ctx.arc(centerX + 20, centerY - 30, 5, 0, 2 * Math.PI);
+      ctx.fillStyle = '#000';
+      ctx.fill();
+      
+      // Animated mouth (lip sync effect)
+      const mouthHeight = Math.sin(Date.now() * 0.01) * 5 + 10;
+      ctx.beginPath();
+      ctx.ellipse(centerX, centerY + 10, 15, mouthHeight, 0, 0, 2 * Math.PI);
+      ctx.fillStyle = '#8B4513';
+      ctx.fill();
+      
+      if (isAISpeaking) {
+        animationRef.current = requestAnimationFrame(animate);
+      }
+    };
+    
+    animate();
+  };
+
+  const stopLipSyncAnimation = () => {
+    if (animationRef.current) {
+      cancelAnimationFrame(animationRef.current);
+    }
+  };
+
+  const handleStartAnswering = () => {
+    setIsRecording(true);
+  };
+
+  const handleEndAnswer = () => {
+    setIsRecording(false);
+    const nextIndex = currentQuestionIndex + 1;
+    
+    if (nextIndex < questions.length) {
+      setCurrentQuestionIndex(nextIndex);
+      setCurrentQuestion(questions[nextIndex]);
+      setTimeout(() => {
+        generateAndPlayAIResponse(questions[nextIndex]);
+      }, 1000);
+    } else {
+      // Interview completed
+      alert('Interview completed! Generating analytics report...');
+    }
   };
 
   const runCompatibilityTest = () => {
@@ -74,29 +210,102 @@ const AIInterview = () => {
     }
   }, [step]);
 
+  // OpenAI Key Input Modal
+  if (showKeyInput) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Card className="p-8 max-w-md w-full mx-4">
+          <div className="text-center mb-6">
+            <h2 className="text-xl font-semibold mb-2">OpenAI API Key Required</h2>
+            <p className="text-muted-foreground text-sm">
+              Enter your OpenAI API key to enable AI interviewer with real-time speech and lip sync.
+            </p>
+          </div>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="openai-key">OpenAI API Key</Label>
+              <Input
+                id="openai-key"
+                type="password"
+                placeholder="sk-..."
+                value={openAIKey}
+                onChange={(e) => setOpenAIKey(e.target.value)}
+              />
+            </div>
+            <div className="flex gap-2">
+              <Button 
+                variant="outline" 
+                onClick={() => setShowKeyInput(false)}
+                className="flex-1"
+              >
+                Cancel
+              </Button>
+              <Button 
+                onClick={() => {
+                  setShowKeyInput(false);
+                  handleStartInterview();
+                }}
+                disabled={!openAIKey}
+                className="flex-1"
+              >
+                Start Interview
+              </Button>
+            </div>
+          </div>
+        </Card>
+      </div>
+    );
+  }
+
   // Interview Interface
   if (isInInterview) {
     return (
       <div className="min-h-screen bg-background flex">
         {/* Main Interview Area */}
         <div className="flex-1 flex flex-col">
-          {/* Video Container */}
-          <div className="flex-1 bg-black relative">
+          {/* AI Interviewer Video Container */}
+          <div className="flex-1 bg-gradient-to-br from-gray-900 to-gray-800 relative">
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="relative w-full h-full max-w-4xl">
-                <img 
-                  src="/lovable-uploads/b0debaa5-62ac-4b72-8b74-e80f0e297c80.png"
-                  alt="AI Interviewer" 
-                  className="w-full h-full object-cover rounded-lg"
+              <div className="relative w-full h-full max-w-4xl flex items-center justify-center">
+                {/* AI Interviewer Canvas */}
+                <canvas
+                  ref={canvasRef}
+                  width={400}
+                  height={300}
+                  className="border-2 border-white/20 rounded-lg bg-gradient-to-br from-blue-100 to-indigo-100"
                 />
-                <div className="absolute bottom-4 left-4 bg-black/50 px-3 py-1 rounded text-white text-sm">
-                  04:55
+                
+                {/* Status Indicators */}
+                <div className="absolute top-4 left-4 bg-black/50 px-3 py-1 rounded text-white text-sm">
+                  {isAISpeaking ? 'AI Speaking...' : 'Waiting for response...'}
                 </div>
-                <div className="absolute bottom-4 right-4">
-                  <Button size="sm" className="bg-green-600 hover:bg-green-700">
-                    <Play className="w-4 h-4 mr-2" />
-                    START ANSWER
-                  </Button>
+                
+                <div className="absolute top-4 right-4 bg-black/50 px-3 py-1 rounded text-white text-sm">
+                  Question {currentQuestionIndex + 1} of {questions.length}
+                </div>
+                
+                {/* Recording Controls */}
+                <div className="absolute bottom-4 right-4 space-x-2">
+                  {!isRecording ? (
+                    <Button 
+                      size="sm" 
+                      className="bg-green-600 hover:bg-green-700"
+                      onClick={handleStartAnswering}
+                      disabled={isAISpeaking}
+                    >
+                      <Mic className="w-4 h-4 mr-2" />
+                      START ANSWER
+                    </Button>
+                  ) : (
+                    <Button 
+                      size="sm" 
+                      className="bg-red-600 hover:bg-red-700"
+                      onClick={handleEndAnswer}
+                    >
+                      <X className="w-4 h-4 mr-2" />
+                      END ANSWER
+                    </Button>
+                  )}
                 </div>
               </div>
             </div>
@@ -109,7 +318,7 @@ const AIInterview = () => {
                 <span className="text-primary text-sm font-medium">Main Question</span>
               </div>
               <h2 className="text-xl font-semibold text-center mb-4">
-                How do you prioritize your tasks when you have multiple deadlines to meet?
+                {currentQuestion || questions[0]}
               </h2>
             </div>
           </div>
@@ -121,6 +330,9 @@ const AIInterview = () => {
           <div className="mb-4">
             <div className="bg-gray-300 rounded-lg h-32 flex items-center justify-center relative">
               <Camera className="w-8 h-8 text-gray-500" />
+              {isRecording && (
+                <div className="absolute top-2 left-2 w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
+              )}
               <Button 
                 size="sm" 
                 variant="ghost" 
@@ -134,8 +346,8 @@ const AIInterview = () => {
 
           {/* Interview Info */}
           <div className="flex-1">
-            <h3 className="font-semibold mb-2">Data Analyst</h3>
-            <p className="text-sm text-muted-foreground mb-4">Warm Up</p>
+            <h3 className="font-semibold mb-2">{formData.position}</h3>
+            <p className="text-sm text-muted-foreground mb-4">{formData.interviewType}</p>
             
             <div className="space-y-3">
               <Button variant="outline" className="w-full justify-start">
@@ -143,13 +355,29 @@ const AIInterview = () => {
                 EVALUATION CRITERIA
               </Button>
               
-              <Button variant="destructive" className="w-full justify-start">
+              <Button 
+                variant="destructive" 
+                className="w-full justify-start"
+                onClick={() => setIsInInterview(false)}
+              >
                 <X className="w-4 h-4 mr-2" />
                 EXIT INTERVIEW
               </Button>
             </div>
+
+            {/* Progress */}
+            <div className="mt-6">
+              <div className="flex justify-between text-sm text-muted-foreground mb-2">
+                <span>Progress</span>
+                <span>{currentQuestionIndex + 1}/{questions.length}</span>
+              </div>
+              <Progress value={((currentQuestionIndex + 1) / questions.length) * 100} />
+            </div>
           </div>
         </div>
+
+        {/* Hidden Audio Element */}
+        <audio ref={audioRef} className="hidden" />
       </div>
     );
   }
