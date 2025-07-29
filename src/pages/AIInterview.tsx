@@ -14,8 +14,6 @@ import Footer from '@/components/Footer';
 
 const AIInterview = () => {
   const [step, setStep] = useState(1);
-  const [selectedRole, setSelectedRole] = useState('all');
-  const [searchTerm, setSearchTerm] = useState('');
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -60,26 +58,12 @@ const AIInterview = () => {
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 
-  const jobRoles = [
-    'all', 'Software Engineer', 'Data Analyst', 'Product Manager', 'UI/UX Designer', 
-    'DevOps Engineer', 'Data Scientist', 'Full Stack Developer', 'Backend Developer', 
-    'Frontend Developer', 'Mobile Developer', 'QA Engineer', 'System Administrator'
-  ];
-
   const interviewers = [
     { id: 'payal', name: 'Payal', language: 'IN English', avatar: '👩🏻‍💼', expertise: 'Technical' },
     { id: 'emma', name: 'Emma', language: 'US English', avatar: '👩🏼‍💼', expertise: 'Behavioral' },
     { id: 'john', name: 'John', language: 'US English', avatar: '👨🏻‍💼', expertise: 'Leadership' },
     { id: 'kapil', name: 'Kapil', language: 'IN English', avatar: '👨🏽‍💼', expertise: 'System Design' }
   ];
-
-  const filteredInterviewers = interviewers.filter(interviewer => {
-    const matchesRole = selectedRole === 'all' || formData.position.includes(selectedRole);
-    const matchesSearch = interviewer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         interviewer.expertise.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    return matchesRole && matchesSearch;
-  });
 
   const handleInputChange = (field: string, value: string | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -530,64 +514,42 @@ const AIInterview = () => {
             <p className="text-sm text-muted-foreground mt-2">Step {step} of 4</p>
           </div>
 
-          {/* Filters Section - Only show before the main form */}
-          {step === 1 && (
-            <Card className="p-6 mb-8 bg-card border border-border">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
-                <div>
-                  <label className="text-sm font-medium text-foreground mb-2 block">Search Interviewers</label>
-                  <Input
-                    placeholder="Search by name or expertise..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="bg-background border-border text-foreground"
-                  />
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-foreground mb-2 block">Job Role</label>
-                  <Select value={selectedRole} onValueChange={setSelectedRole}>
-                    <SelectTrigger className="bg-background border-border text-foreground">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {jobRoles.map(role => (
-                        <SelectItem key={role} value={role}>
-                          {role === 'all' ? 'All Roles' : role}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-foreground mb-2 block">Position</label>
-                  <Select value={formData.position} onValueChange={(value) => handleInputChange('position', value)}>
-                    <SelectTrigger className="bg-background border-border text-foreground">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {jobRoles.slice(1).map(role => (
-                        <SelectItem key={role} value={role}>
-                          {role}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            </Card>
-          )}
-
           {/* Main Content */}
           <div className="bg-card rounded-lg shadow-sm border border-border p-8">
             <div className="mb-6">
               <h2 className="text-xl font-semibold text-foreground mb-2">{formData.position}</h2>
               <span className="text-sm text-muted-foreground bg-muted px-3 py-1 rounded-full">
-                {step === 1 ? 'Job Role' : step === 2 ? 'Interview Configuration' : 'Interviewer Selection'}
+                {step === 1 ? 'Job Position' : step === 2 ? 'Interview Configuration' : 'Interviewer Selection'}
               </span>
             </div>
 
             {step === 1 && (
               <div className="space-y-6">
+                {/* Position Selection */}
+                <div className="mb-6">
+                  <Label className="text-base font-medium mb-4 block text-foreground">
+                    Select Position <span className="text-red-500">*</span>
+                  </Label>
+                  <Select value={formData.position} onValueChange={(value) => handleInputChange('position', value)}>
+                    <SelectTrigger className="bg-background border-border text-foreground">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Data Analyst">Data Analyst</SelectItem>
+                      <SelectItem value="Software Engineer">Software Engineer</SelectItem>
+                      <SelectItem value="Product Manager">Product Manager</SelectItem>
+                      <SelectItem value="UI/UX Designer">UI/UX Designer</SelectItem>
+                      <SelectItem value="DevOps Engineer">DevOps Engineer</SelectItem>
+                      <SelectItem value="Data Scientist">Data Scientist</SelectItem>
+                      <SelectItem value="Full Stack Developer">Full Stack Developer</SelectItem>
+                      <SelectItem value="Backend Developer">Backend Developer</SelectItem>
+                      <SelectItem value="Frontend Developer">Frontend Developer</SelectItem>
+                      <SelectItem value="Mobile Developer">Mobile Developer</SelectItem>
+                      <SelectItem value="QA Engineer">QA Engineer</SelectItem>
+                      <SelectItem value="System Administrator">System Administrator</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
                 {/* Resume Upload Section */}
                 <div className="mb-6">
                   <div className="flex items-center justify-between mb-4">
@@ -668,7 +630,7 @@ const AIInterview = () => {
                     Select Your Interviewer <span className="text-red-500">*</span>
                   </Label>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {filteredInterviewers.map((interviewer) => (
+                    {interviewers.map((interviewer) => (
                       <div 
                         key={interviewer.id}
                         className={`border rounded-lg p-4 cursor-pointer transition-all ${
@@ -689,14 +651,6 @@ const AIInterview = () => {
                       </div>
                     ))}
                   </div>
-                  
-                  {filteredInterviewers.length === 0 && (
-                    <div className="text-center py-8">
-                      <Bot className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                      <h3 className="text-lg font-semibold text-foreground mb-2">No interviewers found</h3>
-                      <p className="text-muted-foreground">Try adjusting your search or filter criteria</p>
-                    </div>
-                  )}
                 </div>
               </div>
             )}
@@ -742,7 +696,7 @@ const AIInterview = () => {
                       className="border-primary text-primary"
                     />
                     <Label htmlFor="terms" className="text-sm text-foreground">
-                      I agree with the <span className="text-primary underline">terms and conditions</span>.
+                      I agree with the <a href="/terms" className="text-primary underline hover:text-primary/80">terms and conditions</a>.
                     </Label>
                   </div>
                 </div>
